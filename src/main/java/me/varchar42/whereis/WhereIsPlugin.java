@@ -19,9 +19,9 @@ public class WhereIsPlugin extends JavaPlugin {
 
 
         metrics = new Metrics(this, 6252);
-        if (!metrics.isEnabled()) getServer().getConsoleSender().sendMessage("Disabled bStats!");
+        if (!metrics.isEnabled()) getServer().getConsoleSender().sendMessage(PREFIX +"Disabled bStats!");
         else {
-            getServer().getConsoleSender().sendMessage("bStats is enabled!");
+            getServer().getConsoleSender().sendMessage(PREFIX + "bStats is enabled!");
         }
 
 
