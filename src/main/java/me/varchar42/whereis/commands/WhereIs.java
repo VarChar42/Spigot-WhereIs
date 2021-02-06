@@ -73,18 +73,6 @@ public class WhereIs implements CommandExecutor {
                     sender.sendMessage(String.format("%s[%s, %s, %s] in dimension %s", WhereIsPlugin.PREFIX, pos.get(0), pos.get(1), pos.get(2), dimname));
                     return true;
                 }
-            } else if (args[0].equalsIgnoreCase("bungeesetup")) {
-                if (args.length != 2) return false;
-                if (player == null)
-                    sender.sendMessage(String.format("%sOnly a player can execute this command!", WhereIsPlugin.PREFIX));
-                ByteArrayDataOutput out = ByteStreams.newDataOutput();
-                out.writeUTF("setupData");
-                out.writeUTF(args[1]);
-                out.writeUTF(String.format("%s%s", sender.getServer().getWorldContainer().getAbsoluteFile(), plugin.getPlayerdataPath()));
-                player.sendPluginMessage(plugin, "whereis:setup", out.toByteArray());
-
-                sender.sendMessage(String.format("%sSended setup data to bungeecord", WhereIsPlugin.PREFIX));
-
             }
         } catch (FileNotFoundException e) {
             e.printStackTrace();
