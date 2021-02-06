@@ -5,18 +5,22 @@ import com.mojang.nbt.DoubleTag;
 import com.mojang.nbt.ListTag;
 import com.mojang.nbt.NbtIo;
 import me.varchar42.whereis.WhereIsPlugin;
+import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
-public class Otp implements CommandExecutor {
+public class Otp implements CommandExecutor, TabCompleter {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
         try {
@@ -35,7 +39,10 @@ public class Otp implements CommandExecutor {
             if (!player.hasPlayedBefore()) {
                 sender.sendMessage(WhereIsPlugin.PREFIX + "Player was never online");
             } else if (player.isOnline()) {
-                sender.sendMessage(WhereIsPlugin.PREFIX + "Player is online use /tp instead");
+                Location l = new Location(sender.getServer().getPlayer(sender.getName()).getLocation().getWorld(),
+                        (int) Double.parseDouble(args[1]) + 0.5, (int) Double.parseDouble(args[2]),
+                        (int) Double.parseDouble(args[3]) + 0.5);
+                sender.getServer().getPlayer(sender.getName()).teleport(l);
             } else {
                 String worldname = sender.getServer().getWorlds().get(0).getName();
                 String path = String.format("#%s#playerdata#", worldname).replace("#", File.separator);
@@ -67,5 +74,37 @@ public class Otp implements CommandExecutor {
             return false;
         }
         return true;
+    }
+
+    @Override
+    public List<String> onTabComplete(CommandSender arg0, Command arg1, String arg2, String[] args) {
+
+        if (arg0.isOp()) {
+            OfflinePlayer[] of = arg0.getServer().getOfflinePlayers();
+
+            List<String> a1 = new ArrayList<String>();
+            List<String> a2 = new ArrayList<String>();
+
+            for (int x = 0; x < of.length; x++) {
+                a1.add(of[x].getName());
+
+            }
+
+            if (args.length == 1) {
+                for (String guess : a1) {
+                    if (guess.toLowerCase().startsWith(args[0].toLowerCase()))
+                        a2.add(guess);
+
+                }
+
+            }
+
+            return a2;
+
+        } else {
+            List<String> nothing = new ArrayList<String>();
+            return nothing;
+
+        }
     }
 }

@@ -27,8 +27,13 @@ public class WhereIsPlugin extends JavaPlugin {
 
         getServer().getMessenger().registerOutgoingPluginChannel(this, "whereis:setup");
 
-        getCommand("whereis").setExecutor(new WhereIs(this));
-        getCommand("otp").setExecutor(new Otp());
+        Otp otpHandler = new Otp();
+        getCommand("otp").setExecutor(otpHandler);
+        getCommand("otp").setTabCompleter(otpHandler);
+
+        WhereIs wiHandler = new WhereIs(this);
+        getCommand("whereis").setExecutor(wiHandler);
+        getCommand("whereis").setTabCompleter(wiHandler);
 
     }
 
