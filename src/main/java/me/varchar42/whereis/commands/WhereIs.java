@@ -86,8 +86,6 @@ public class WhereIs implements CommandExecutor {
                 sender.sendMessage(String.format("%sSended setup data to bungeecord", WhereIsPlugin.PREFIX));
 
             }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }

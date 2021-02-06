@@ -1,0 +1,4 @@
+name: bWhereIs
+version: 2.2.0
+main: me.varchar42.whereis.bungee.WhereIsBungeePlugin
+author: VarChar42
