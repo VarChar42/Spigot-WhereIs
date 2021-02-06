@@ -2,7 +2,7 @@ package me.varchar42.whereis;
 
 import me.varchar42.whereis.commands.Otp;
 import me.varchar42.whereis.commands.WhereIs;
-import me.varchar42.whereis.utils.Metrics;
+import org.bstats.bukkit.Metrics;
 import org.bukkit.ChatColor;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -18,7 +18,7 @@ public class WhereIsPlugin extends JavaPlugin {
         super.onEnable();
 
 
-        metrics = new Metrics(this);
+        metrics = new Metrics(this, 6252);
         if (!metrics.isEnabled()) getServer().getConsoleSender().sendMessage("Disabled bStats!");
         else {
             getServer().getConsoleSender().sendMessage("bStats is enabled!");
