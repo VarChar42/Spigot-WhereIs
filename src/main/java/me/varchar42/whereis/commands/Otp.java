@@ -5,7 +5,6 @@ import com.mojang.nbt.DoubleTag;
 import com.mojang.nbt.ListTag;
 import com.mojang.nbt.NbtIo;
 import me.varchar42.whereis.WhereIsPlugin;
-import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -39,10 +38,7 @@ public class Otp implements CommandExecutor, TabCompleter {
             if (!player.hasPlayedBefore()) {
                 sender.sendMessage(WhereIsPlugin.PREFIX + "Player was never online");
             } else if (player.isOnline()) {
-                Location l = new Location(sender.getServer().getPlayer(sender.getName()).getLocation().getWorld(),
-                        (int) Double.parseDouble(args[1]) + 0.5, (int) Double.parseDouble(args[2]),
-                        (int) Double.parseDouble(args[3]) + 0.5);
-                sender.getServer().getPlayer(sender.getName()).teleport(l);
+                sender.sendMessage(WhereIsPlugin.PREFIX + "Player is online use /tp instead");
             } else {
                 String worldname = sender.getServer().getWorlds().get(0).getName();
                 String path = String.format("#%s#playerdata#", worldname).replace("#", File.separator);

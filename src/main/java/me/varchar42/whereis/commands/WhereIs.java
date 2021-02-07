@@ -59,18 +59,7 @@ public class WhereIs implements CommandExecutor, TabCompleter {
                     CompoundTag playerdata = NbtIo.readCompressed(inputStream);
                     ListTag<IntTag> pos = (ListTag<IntTag>) playerdata.getList("Pos");
                     String dim = playerdata.getString("Dimension");
-                    /*String dimname = "" + dim;
-                    switch (dim) {
-                        case -1:
-                            dimname = "Nether";
-                            break;
-                        case 0:
-                            dimname = "Overworld";
-                            break;
-                        case 1:
-                            dimname = "TheEnd";
-                            break;
-                    }*/
+
 
 
                     sender.sendMessage(String.format("%s[%s, %s, %s] in dimension %s", WhereIsPlugin.PREFIX, pos.get(0), pos.get(1), pos.get(2), dim));
@@ -89,26 +78,26 @@ public class WhereIs implements CommandExecutor, TabCompleter {
 
 
     @Override
-    public List<String> onTabComplete(CommandSender arg0, Command arg1, String arg2, String[] args) {
+    public List<String> onTabComplete(CommandSender sender, Command command, String s, String[] args) {
 
-        if (arg0.isOp()) {
-            OfflinePlayer[] of = arg0.getServer().getOfflinePlayers();
+        if (sender.isOp()) {
+            OfflinePlayer[] of = sender.getServer().getOfflinePlayers();
 
-            List<String> a1 = new ArrayList<String>();
-            List<String> a2 = new ArrayList<String>();
+            List<String> offlineNames = new ArrayList<String>();
+            List<String> suggestion = new ArrayList<String>();
 
             if (args.length == 1) {
                 for (int x = 0; x < of.length; x++) {
-                    a1.add(of[x].getName());
+                    offlineNames.add(of[x].getName());
                 }
-                for (String guess : a1) {
+                for (String guess : offlineNames) {
                     if (guess.toLowerCase().startsWith(args[0].toLowerCase()))
-                        a2.add(guess);
+                        suggestion.add(guess);
                 }
 
             }
 
-            return a2;
+            return suggestion;
 
         } else {
             List<String> nothing = new ArrayList<String>();
