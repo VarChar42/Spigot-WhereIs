@@ -9,14 +9,17 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
-public class Otp implements CommandExecutor {
+public class Otp implements CommandExecutor, TabCompleter {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
         try {
@@ -67,5 +70,37 @@ public class Otp implements CommandExecutor {
             return false;
         }
         return true;
+    }
+
+    @Override
+    public List<String> onTabComplete(CommandSender arg0, Command arg1, String arg2, String[] args) {
+
+        if (arg0.isOp()) {
+            OfflinePlayer[] of = arg0.getServer().getOfflinePlayers();
+
+            List<String> offlineNames = new ArrayList<String>();
+            List<String> suggestion = new ArrayList<String>();
+
+            for (int x = 0; x < of.length; x++) {
+                offlineNames.add(of[x].getName());
+
+            }
+
+            if (args.length == 1) {
+                for (String guess : offlineNames) {
+                    if (guess.toLowerCase().startsWith(args[0].toLowerCase()))
+                        suggestion.add(guess);
+
+                }
+
+            }
+
+            return suggestion;
+
+        } else {
+            List<String> nothing = new ArrayList<String>();
+            return nothing;
+
+        }
     }
 }

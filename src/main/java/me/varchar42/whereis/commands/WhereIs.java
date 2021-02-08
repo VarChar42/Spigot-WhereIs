@@ -13,14 +13,17 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
-public class WhereIs implements CommandExecutor {
+public class WhereIs implements CommandExecutor, TabCompleter {
 
     private WhereIsPlugin plugin;
 
@@ -40,9 +43,9 @@ public class WhereIs implements CommandExecutor {
                 }
             }
             if (args.length < 1) return false;
-            if (args[0].equalsIgnoreCase("find")) {
-                if (args.length != 2) return false;
-                @SuppressWarnings("deprecation") OfflinePlayer oPlayer = sender.getServer().getOfflinePlayer(args[1]);
+
+                if (args.length != 1) return false;
+                @SuppressWarnings("deprecation") OfflinePlayer oPlayer = sender.getServer().getOfflinePlayer(args[0]);
 
                 if (!oPlayer.hasPlayedBefore()) {
                     sender.sendMessage(WhereIsPlugin.PREFIX + "Player was never online");
@@ -55,25 +58,14 @@ public class WhereIs implements CommandExecutor {
                     FileInputStream inputStream = new FileInputStream(playdataFile);
                     CompoundTag playerdata = NbtIo.readCompressed(inputStream);
                     ListTag<IntTag> pos = (ListTag<IntTag>) playerdata.getList("Pos");
-                    int dim = playerdata.getInt("Dimension");
-                    String dimname = "" + dim;
-                    switch (dim) {
-                        case -1:
-                            dimname = "Nether";
-                            break;
-                        case 0:
-                            dimname = "Overworld";
-                            break;
-                        case 1:
-                            dimname = "TheEnd";
-                            break;
-                    }
+                    String dim = playerdata.getString("Dimension");
 
 
-                    sender.sendMessage(String.format("%s[%s, %s, %s] in dimension %s", WhereIsPlugin.PREFIX, pos.get(0), pos.get(1), pos.get(2), dimname));
+
+                    sender.sendMessage(String.format("%s[%s, %s, %s] in dimension %s", WhereIsPlugin.PREFIX, pos.get(0), pos.get(1), pos.get(2), dim));
                     return true;
                 }
-            }
+
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -83,4 +75,34 @@ public class WhereIs implements CommandExecutor {
         return true;
     }
 
+
+
+    @Override
+    public List<String> onTabComplete(CommandSender sender, Command command, String s, String[] args) {
+
+        if (sender.isOp()) {
+            OfflinePlayer[] of = sender.getServer().getOfflinePlayers();
+
+            List<String> offlineNames = new ArrayList<String>();
+            List<String> suggestion = new ArrayList<String>();
+
+            if (args.length == 1) {
+                for (int x = 0; x < of.length; x++) {
+                    offlineNames.add(of[x].getName());
+                }
+                for (String guess : offlineNames) {
+                    if (guess.toLowerCase().startsWith(args[0].toLowerCase()))
+                        suggestion.add(guess);
+                }
+
+            }
+
+            return suggestion;
+
+        } else {
+            List<String> nothing = new ArrayList<String>();
+            return nothing;
+
+        }
+    }
 }

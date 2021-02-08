@@ -1,9 +1,9 @@
 name: WhereIs
-version: 2.1.2
+version: 2.1.3
 main: me.varchar42.whereis.WhereIsPlugin
-author: VarChar42
+authors: [VarChar42, Stefan456789]
 commands:
   whereis:
-    usage: /whereis <find | setup> <name |servername>
+    usage: /whereis [Player]
   otp:
-    usage: /otp <name> <x> <y> <z>
+    usage: /otp [Player] [x] [y] [z]
