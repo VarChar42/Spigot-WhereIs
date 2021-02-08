@@ -78,24 +78,24 @@ public class Otp implements CommandExecutor, TabCompleter {
         if (arg0.isOp()) {
             OfflinePlayer[] of = arg0.getServer().getOfflinePlayers();
 
-            List<String> a1 = new ArrayList<String>();
-            List<String> a2 = new ArrayList<String>();
+            List<String> offlineNames = new ArrayList<String>();
+            List<String> suggestion = new ArrayList<String>();
 
             for (int x = 0; x < of.length; x++) {
-                a1.add(of[x].getName());
+                offlineNames.add(of[x].getName());
 
             }
 
             if (args.length == 1) {
-                for (String guess : a1) {
+                for (String guess : offlineNames) {
                     if (guess.toLowerCase().startsWith(args[0].toLowerCase()))
-                        a2.add(guess);
+                        suggestion.add(guess);
 
                 }
 
             }
 
-            return a2;
+            return suggestion;
 
         } else {
             List<String> nothing = new ArrayList<String>();
