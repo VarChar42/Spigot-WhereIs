@@ -49,7 +49,13 @@ public class WhereIs implements CommandExecutor, TabCompleter {
                     sender.sendMessage(WhereIsPlugin.PREFIX + "Player was never online");
                 } else if (oPlayer.isOnline()) {
                     Location loc = oPlayer.getPlayer().getLocation();
-                    sender.sendMessage(String.format("%s[%s, %s, %s] in world %s", WhereIsPlugin.PREFIX, loc.getX(), loc.getY(), loc.getZ(), loc.getWorld().getName()));
+                    TextComponent locMessage = new TextComponent("[" + loc.getX() + ", " + loc.getY() + ", " + loc.getZ() + "]");
+                    locMessage.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("Click to teleport")));
+                    locMessage.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/tp " + sender.getName() + " " + loc.getX() + " " + loc.getY() + " " + loc.getZ()));
+                    locMessage.setColor(ChatColor.GREEN);
+                    sender.spigot().sendMessage(new TextComponent(new TextComponent(WhereIsPlugin.PREFIX)), locMessage, new TextComponent(" in world " + loc.getWorld().getName() + "."));
+
+                   
                 } else {
                     sender.sendMessage(WhereIsPlugin.PREFIX + "Loading playerdata.");
                     File playdataFile = new File(String.format("%s%s%s.dat", sender.getServer().getWorldContainer().getAbsoluteFile(), plugin.getPlayerdataPath(), oPlayer.getUniqueId()));
@@ -58,9 +64,13 @@ public class WhereIs implements CommandExecutor, TabCompleter {
                     ListTag<IntTag> pos = (ListTag<IntTag>) playerdata.getList("Pos");
                     String dim = playerdata.getString("Dimension");
 
+                    TextComponent posMessage = new TextComponent("[" + pos.get(0)  + ", " + pos.get(1) + ", " + pos.get(2) + "]");
+                    posMessage.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("Click to teleport")));
+                    posMessage.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/tp " + sender.getName() + " " + pos.get(0) + " " + pos.get(1) + " " + pos.get(2)));
+                    posMessage.setColor(ChatColor.GREEN);
 
-
-                    sender.sendMessage(String.format("%s[%s, %s, %s] in dimension %s", WhereIsPlugin.PREFIX, pos.get(0), pos.get(1), pos.get(2), dim));
+                    
+                    sender.spigot().sendMessage(new TextComponent(WhereIsPlugin.PREFIX), posMessage, new TextComponent(" in dimension "), new TextComponent(dim));
                     return true;
                 }
 
