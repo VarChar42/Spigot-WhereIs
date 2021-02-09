@@ -1,31 +1,31 @@
-package com.mojang.nbt;
+package me.varchar42.nbt;
 
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
 
-public class LongTag extends Tag {
-    public long data;
+public class IntTag extends Tag {
+    public int data;
 
-    public LongTag(String name) {
+    public IntTag(String name) {
         super(name);
     }
 
-    public LongTag(String name, long data) {
+    public IntTag(String name, int data) {
         super(name);
         this.data = data;
     }
 
     void write(DataOutput dos) throws IOException {
-        dos.writeLong(data);
+        dos.writeInt(data);
     }
 
     void load(DataInput dis) throws IOException {
-        data = dis.readLong();
+        data = dis.readInt();
     }
 
     public byte getId() {
-        return TAG_Long;
+        return TAG_Int;
     }
 
     public String toString() {
@@ -34,13 +34,13 @@ public class LongTag extends Tag {
 
     @Override
     public Tag copy() {
-        return new LongTag(getName(), data);
+        return new IntTag(getName(), data);
     }
 
     @Override
     public boolean equals(Object obj) {
         if (super.equals(obj)) {
-            LongTag o = (LongTag) obj;
+            IntTag o = (IntTag) obj;
             return data == o.data;
         }
         return false;

@@ -1,4 +1,4 @@
-package com.mojang.nbt;
+package me.varchar42.nbt;
 
 
 import java.io.*;

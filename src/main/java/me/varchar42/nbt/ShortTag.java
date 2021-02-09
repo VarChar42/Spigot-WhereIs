@@ -1,32 +1,32 @@
-package com.mojang.nbt;
+package me.varchar42.nbt;
+
 
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
 
-public class StringTag extends Tag {
-    public String data;
+public class ShortTag extends Tag {
+    public short data;
 
-    public StringTag(String name) {
+    public ShortTag(String name) {
         super(name);
     }
 
-    public StringTag(String name, String data) {
+    public ShortTag(String name, short data) {
         super(name);
         this.data = data;
-        if (data == null) throw new IllegalArgumentException("Empty string not allowed");
     }
 
     void write(DataOutput dos) throws IOException {
-        dos.writeUTF(data);
+        dos.writeShort(data);
     }
 
     void load(DataInput dis) throws IOException {
-        data = dis.readUTF();
+        data = dis.readShort();
     }
 
     public byte getId() {
-        return TAG_String;
+        return TAG_Short;
     }
 
     public String toString() {
@@ -35,14 +35,14 @@ public class StringTag extends Tag {
 
     @Override
     public Tag copy() {
-        return new StringTag(getName(), data);
+        return new ShortTag(getName(), data);
     }
 
     @Override
     public boolean equals(Object obj) {
         if (super.equals(obj)) {
-            StringTag o = (StringTag) obj;
-            return ((data == null && o.data == null) || (data != null && data.equals(o.data)));
+            ShortTag o = (ShortTag) obj;
+            return data == o.data;
         }
         return false;
     }
