@@ -1,12 +1,10 @@
 package me.varchar42.whereis.commands;
 
 
-import com.google.common.io.ByteArrayDataOutput;
-import com.google.common.io.ByteStreams;
-import com.mojang.nbt.CompoundTag;
-import com.mojang.nbt.IntTag;
-import com.mojang.nbt.ListTag;
-import com.mojang.nbt.NbtIo;
+import me.varchar42.nbt.CompoundTag;
+import me.varchar42.nbt.IntTag;
+import me.varchar42.nbt.ListTag;
+import me.varchar42.nbt.NbtIo;
 import me.varchar42.whereis.WhereIsPlugin;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;

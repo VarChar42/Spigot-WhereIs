@@ -1,31 +1,31 @@
-package com.mojang.nbt;
+package me.varchar42.nbt;
 
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
 
-public class FloatTag extends Tag {
-    public float data;
+public class DoubleTag extends Tag {
+    public double data;
 
-    public FloatTag(String name) {
+    public DoubleTag(String name) {
         super(name);
     }
 
-    public FloatTag(String name, float data) {
+    public DoubleTag(String name, double data) {
         super(name);
         this.data = data;
     }
 
     void write(DataOutput dos) throws IOException {
-        dos.writeFloat(data);
+        dos.writeDouble(data);
     }
 
     void load(DataInput dis) throws IOException {
-        data = dis.readFloat();
+        data = dis.readDouble();
     }
 
     public byte getId() {
-        return TAG_Float;
+        return TAG_Double;
     }
 
     public String toString() {
@@ -34,13 +34,13 @@ public class FloatTag extends Tag {
 
     @Override
     public Tag copy() {
-        return new FloatTag(getName(), data);
+        return new DoubleTag(getName(), data);
     }
 
     @Override
     public boolean equals(Object obj) {
         if (super.equals(obj)) {
-            FloatTag o = (FloatTag) obj;
+            DoubleTag o = (DoubleTag) obj;
             return data == o.data;
         }
         return false;

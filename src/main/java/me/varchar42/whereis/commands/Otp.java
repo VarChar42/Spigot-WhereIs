@@ -1,9 +1,9 @@
 package me.varchar42.whereis.commands;
 
-import com.mojang.nbt.CompoundTag;
-import com.mojang.nbt.DoubleTag;
-import com.mojang.nbt.ListTag;
-import com.mojang.nbt.NbtIo;
+import me.varchar42.nbt.CompoundTag;
+import me.varchar42.nbt.DoubleTag;
+import me.varchar42.nbt.ListTag;
+import me.varchar42.nbt.NbtIo;
 import me.varchar42.whereis.WhereIsPlugin;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
