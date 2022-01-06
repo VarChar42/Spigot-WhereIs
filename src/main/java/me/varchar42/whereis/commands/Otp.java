@@ -12,14 +12,23 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Otp implements CommandExecutor, TabCompleter {
+
+    public String playerDataPath;
+
+    public Otp(WhereIsPlugin main) {
+        String mainWorldName = main.getServer().getWorlds().get(0).getName();
+        playerDataPath = String.format("%s#%s#playerdata#",
+                main.getServer().getWorldContainer().getAbsoluteFile(),
+                mainWorldName).replace("#", File.separator);
+
+
+    }
+
     @Override
     public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
         try {
@@ -33,35 +42,28 @@ public class Otp implements CommandExecutor, TabCompleter {
             }
             if (args.length != 4) return false;
 
-            @SuppressWarnings("deprecation") OfflinePlayer player = sender.getServer().getOfflinePlayer(args[0]);
+            String playerName = args[0];
+            double x = Double.parseDouble(args[1]);
+            double y = Double.parseDouble(args[2]);
+            double z = Double.parseDouble(args[3]);
 
-            if (!player.hasPlayedBefore()) {
-                sender.sendMessage(WhereIsPlugin.PREFIX + "Player was never online");
-            } else if (player.isOnline()) {
-                sender.sendMessage(WhereIsPlugin.PREFIX + "Player is online use /tp instead");
+            OfflinePlayer[] players;
+
+            if (playerName.equals("all")) {
+                players = sender.getServer().getOfflinePlayers();
             } else {
-                String worldname = sender.getServer().getWorlds().get(0).getName();
-                String path = String.format("#%s#playerdata#", worldname).replace("#", File.separator);
+                players = new OfflinePlayer[] {sender.getServer().getOfflinePlayer(playerName)};
+            }
 
-
-                File playdataFile = new File(String.format("%s%s%s.dat", sender.getServer().getWorldContainer().getAbsoluteFile(), path, player.getUniqueId()));
-
-
-                FileInputStream inputStream = new FileInputStream(playdataFile);
-                CompoundTag playerdata = NbtIo.readCompressed(inputStream);
-                inputStream.close();
-
-
-                ListTag<DoubleTag> pos = new ListTag<>("Pos");
-                pos.add(new DoubleTag("x", Double.parseDouble(args[1])));
-                pos.add(new DoubleTag("y", Double.parseDouble(args[2])));
-                pos.add(new DoubleTag("z", Double.parseDouble(args[3])));
-                playerdata.putList(pos);
-                FileOutputStream outputStream = new FileOutputStream(playdataFile);
-                NbtIo.writeCompressed(playerdata, outputStream);
-                sender.sendMessage(WhereIsPlugin.PREFIX + "Player position changed.");
-
-                outputStream.close();
+            for (OfflinePlayer player : players) {
+                if (!player.hasPlayedBefore()) {
+                    sender.sendMessage(WhereIsPlugin.PREFIX + "Player "+player.getName()+" was never online.");
+                } else if (player.isOnline()) {
+                    sender.sendMessage(WhereIsPlugin.PREFIX + "Player "+player.getName()+" is online use /tp instead.");
+                } else {
+                    teleportOfflinePlayer(player, x, y, z);
+                    sender.sendMessage(WhereIsPlugin.PREFIX + "Position of "+player.getName()+" updated.");
+                }
             }
 
         } catch (IOException e) {
@@ -72,35 +74,40 @@ public class Otp implements CommandExecutor, TabCompleter {
         return true;
     }
 
+    public void teleportOfflinePlayer(OfflinePlayer player, double x, double y, double z) throws IOException {
+        File playDataFile = new File(String.format("%s%s.dat", playerDataPath, player.getUniqueId()));
+
+        FileInputStream inputStream = new FileInputStream(playDataFile);
+        CompoundTag playerData = NbtIo.readCompressed(inputStream);
+        inputStream.close();
+        ListTag<DoubleTag> pos = new ListTag<>("Pos");
+        pos.add(new DoubleTag("x", x));
+        pos.add(new DoubleTag("y", y));
+        pos.add(new DoubleTag("z", z));
+        playerData.putList(pos);
+        FileOutputStream outputStream = new FileOutputStream(playDataFile);
+        NbtIo.writeCompressed(playerData, outputStream);
+        outputStream.close();
+    }
+
     @Override
-    public List<String> onTabComplete(CommandSender arg0, Command arg1, String arg2, String[] args) {
+    public List<String> onTabComplete(CommandSender sender, Command arg1, String arg2, String[] args) {
 
-        if (arg0.isOp()) {
-            OfflinePlayer[] of = arg0.getServer().getOfflinePlayers();
+        if (sender.isOp() && args.length == 1) {
 
-            List<String> offlineNames = new ArrayList<String>();
-            List<String> suggestion = new ArrayList<String>();
+            OfflinePlayer[] offlinePlayers = sender.getServer().getOfflinePlayers();
+            List<String> suggestions = new ArrayList<>();
 
-            for (int x = 0; x < of.length; x++) {
-                offlineNames.add(of[x].getName());
-
+            for (OfflinePlayer offlinePlayer : offlinePlayers) {
+                String name = offlinePlayer.getName();
+                if (name == null) continue;
+                if (name.toLowerCase().startsWith(args[0].toLowerCase()))
+                    suggestions.add(name);
             }
 
-            if (args.length == 1) {
-                for (String guess : offlineNames) {
-                    if (guess.toLowerCase().startsWith(args[0].toLowerCase()))
-                        suggestion.add(guess);
-
-                }
-
-            }
-
-            return suggestion;
-
-        } else {
-            List<String> nothing = new ArrayList<String>();
-            return nothing;
-
+            return suggestions;
         }
+
+        return null;
     }
 }

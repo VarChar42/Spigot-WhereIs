@@ -17,17 +17,11 @@ public class WhereIsPlugin extends JavaPlugin {
     public void onEnable() {
         super.onEnable();
 
-
         metrics = new Metrics(this, 6252);
-        if (!metrics.isEnabled()) getServer().getConsoleSender().sendMessage(PREFIX +"Disabled bStats!");
-        else {
-            getServer().getConsoleSender().sendMessage(PREFIX + "bStats is enabled!");
-        }
-
 
         getServer().getMessenger().registerOutgoingPluginChannel(this, "whereis:setup");
 
-        Otp otpHandler = new Otp();
+        Otp otpHandler = new Otp(this);
         getCommand("otp").setExecutor(otpHandler);
         getCommand("otp").setTabCompleter(otpHandler);
 

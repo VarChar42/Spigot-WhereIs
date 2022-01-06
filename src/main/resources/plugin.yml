@@ -4,6 +4,6 @@ main: me.varchar42.whereis.WhereIsPlugin
 authors: [VarChar42, Stefan456789]
 commands:
   whereis:
-    usage: /whereis [Player]
+    usage: /whereis <Player>
   otp:
-    usage: /otp [Player] [x] [y] [z]
+    usage: /otp <Player> <x> <y> <z>

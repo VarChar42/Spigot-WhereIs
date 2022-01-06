@@ -49,7 +49,7 @@ public class WhereIs implements CommandExecutor, TabCompleter {
                     sender.sendMessage(WhereIsPlugin.PREFIX + "Player was never online");
                 } else if (oPlayer.isOnline()) {
                     Location loc = oPlayer.getPlayer().getLocation();
-                    sender.sendMessage(String.format("%s[%s, %s, %s] in world %s", WhereIsPlugin.PREFIX, loc.getX(), loc.getY(), loc.getZ(), loc.getWorld().getName()));
+                    sender.sendMessage(String.format("%s[%s, %s, %s] in world \"%s\"", WhereIsPlugin.PREFIX, loc.getX(), loc.getY(), loc.getZ(), loc.getWorld().getName()));
                 } else {
                     sender.sendMessage(WhereIsPlugin.PREFIX + "Loading playerdata.");
                     File playdataFile = new File(String.format("%s%s%s.dat", sender.getServer().getWorldContainer().getAbsoluteFile(), plugin.getPlayerdataPath(), oPlayer.getUniqueId()));
@@ -64,16 +64,12 @@ public class WhereIs implements CommandExecutor, TabCompleter {
                     return true;
                 }
 
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
 
         return true;
     }
-
-
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String s, String[] args) {
