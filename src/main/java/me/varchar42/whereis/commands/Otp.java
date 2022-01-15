@@ -56,18 +56,21 @@ public class Otp implements CommandExecutor, TabCompleter {
             }
 
             for (OfflinePlayer player : players) {
-                if (!player.hasPlayedBefore()) {
-                    sender.sendMessage(WhereIsPlugin.PREFIX + "Player "+player.getName()+" was never online.");
-                } else if (player.isOnline()) {
-                    sender.sendMessage(WhereIsPlugin.PREFIX + "Player "+player.getName()+" is online use /tp instead.");
-                } else {
-                    teleportOfflinePlayer(player, x, y, z);
-                    sender.sendMessage(WhereIsPlugin.PREFIX + "Position of "+player.getName()+" updated.");
+                try {
+                    if (!player.hasPlayedBefore()) {
+                        sender.sendMessage(WhereIsPlugin.PREFIX + "Player " + player.getName() + " was never online.");
+                    } else if (player.isOnline()) {
+                        if (players.length != 1) continue;
+                        sender.sendMessage(WhereIsPlugin.PREFIX + "Player " + player.getName() + " is online use /tp instead.");
+                    } else {
+                        teleportOfflinePlayer(player, x, y, z);
+                        sender.sendMessage(WhereIsPlugin.PREFIX + "Position of " + player.getName() + " updated.");
+                    }
+                } catch (IOException e) {
+                    sender.sendMessage(WhereIsPlugin.PREFIX + "Error while updating " + player.getName());
+                    e.printStackTrace();
                 }
             }
-
-        } catch (IOException e) {
-            e.printStackTrace();
         } catch (NumberFormatException e) {
             return false;
         }
