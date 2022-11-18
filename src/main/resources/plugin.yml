@@ -1,5 +1,5 @@
 name: WhereIs
-version: 2.1.3
+version: 2.2.0
 main: me.varchar42.whereis.WhereIsPlugin
 authors: [VarChar42, Stefan456789]
 commands:

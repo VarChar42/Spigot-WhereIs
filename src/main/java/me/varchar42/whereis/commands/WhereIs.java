@@ -32,7 +32,7 @@ public class WhereIs implements CommandExecutor, TabCompleter {
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String s, String[] args) {
         try {
-            Player player = null;
+            Player player;
             if (sender instanceof Player) {
                 player = (Player) sender;
                 if (!player.hasPermission("whereis.use")) {
@@ -40,29 +40,30 @@ public class WhereIs implements CommandExecutor, TabCompleter {
                     return true;
                 }
             }
-            if (args.length < 1) return false;
+            if (args.length != 1) return false;
+            @SuppressWarnings("deprecation") OfflinePlayer oPlayer = sender.getServer().getOfflinePlayer(args[0]);
 
-                if (args.length != 1) return false;
-                @SuppressWarnings("deprecation") OfflinePlayer oPlayer = sender.getServer().getOfflinePlayer(args[0]);
+            if (!oPlayer.hasPlayedBefore()) {
+                sender.sendMessage(WhereIsPlugin.PREFIX + "Player was never online");
+            } else if (oPlayer.isOnline()) {
+                Location loc = oPlayer.getPlayer().getLocation();
+                sender.sendMessage(String.format("%s[%s, %s, %s] in world \"%s\"", WhereIsPlugin.PREFIX, loc.getX(), loc.getY(), loc.getZ(), loc.getWorld().getName()));
+            } else {
 
-                if (!oPlayer.hasPlayedBefore()) {
-                    sender.sendMessage(WhereIsPlugin.PREFIX + "Player was never online");
-                } else if (oPlayer.isOnline()) {
-                    Location loc = oPlayer.getPlayer().getLocation();
-                    sender.sendMessage(String.format("%s[%s, %s, %s] in world \"%s\"", WhereIsPlugin.PREFIX, loc.getX(), loc.getY(), loc.getZ(), loc.getWorld().getName()));
-                } else {
-                    sender.sendMessage(WhereIsPlugin.PREFIX + "Loading playerdata.");
-                    File playdataFile = new File(String.format("%s%s%s.dat", sender.getServer().getWorldContainer().getAbsoluteFile(), plugin.getPlayerdataPath(), oPlayer.getUniqueId()));
-                    FileInputStream inputStream = new FileInputStream(playdataFile);
-                    CompoundTag playerdata = NbtIo.readCompressed(inputStream);
-                    ListTag<IntTag> pos = (ListTag<IntTag>) playerdata.getList("Pos");
-                    String dim = playerdata.getString("Dimension");
+                sender.sendMessage(WhereIsPlugin.PREFIX + "Loading playerdata.");
+
+                File playerDataFile = new File(String.format("%s%s%s.dat", sender.getServer().getWorldContainer().getAbsoluteFile(), plugin.getPlayerdataPath(), oPlayer.getUniqueId()));
+                FileInputStream inputStream = new FileInputStream(playerDataFile);
+
+                CompoundTag playerData = NbtIo.readCompressed(inputStream);
+
+                ListTag<IntTag> playerPosList = (ListTag<IntTag>) playerData.getList("Pos");
+                String dim = playerData.getString("Dimension");
 
 
-
-                    sender.sendMessage(String.format("%s[%s, %s, %s] in dimension %s", WhereIsPlugin.PREFIX, pos.get(0), pos.get(1), pos.get(2), dim));
-                    return true;
-                }
+                sender.sendMessage(String.format("%s[%s, %s, %s] in dimension %s", WhereIsPlugin.PREFIX, playerPosList.get(0), playerPosList.get(1), playerPosList.get(2), dim));
+                return true;
+            }
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -74,29 +75,21 @@ public class WhereIs implements CommandExecutor, TabCompleter {
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String s, String[] args) {
 
-        if (sender.isOp()) {
-            OfflinePlayer[] of = sender.getServer().getOfflinePlayers();
-
-            List<String> offlineNames = new ArrayList<String>();
-            List<String> suggestion = new ArrayList<String>();
+        if (sender.hasPermission("whereis.use")) {
+            List<String> suggestion = new ArrayList<>();
 
             if (args.length == 1) {
-                for (int x = 0; x < of.length; x++) {
-                    offlineNames.add(of[x].getName());
+                for (OfflinePlayer offlinePlayer : sender.getServer().getOfflinePlayers()) {
+                    String name = offlinePlayer.getName();
+                    if (name == null) continue;
+                    if (name.toLowerCase().startsWith(args[0].toLowerCase())) {
+                        suggestion.add(name);
+                    }
                 }
-                for (String guess : offlineNames) {
-                    if (guess.toLowerCase().startsWith(args[0].toLowerCase()))
-                        suggestion.add(guess);
-                }
-
             }
-
             return suggestion;
-
         } else {
-            List<String> nothing = new ArrayList<String>();
-            return nothing;
-
+            return new ArrayList<>(0);
         }
     }
 }
